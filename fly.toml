@@ -1,0 +1,35 @@
+# Fly.io config for this project.
+# SET THE APP NAME: replace crom-CHANGE-ME with this project's Fly app name
+# (lowercase letters, numbers and dashes, e.g. crom-<project>-demo) before
+# the first `fly apps create` / `fly deploy`. The placeholder is invalid on
+# purpose so a deploy fails until it is set.
+app = "crom-CHANGE-ME"
+primary_region = "syd"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "3000"
+  NODE_ENV = "production"
+  # Secrets go in `fly secrets set NAME=value`, never in this file.
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
