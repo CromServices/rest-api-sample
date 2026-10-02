@@ -1,46 +1,63 @@
-# REST API sample — Crom Services
+# REST API sample
 
-Public sample of how Crom Services approaches small TypeScript REST API work.
+Small TypeScript REST API: `/health` and `/items` with request validation over a swappable `Store<Item>`.
 
-This folder demonstrates a minimal Express TypeScript API with GET /health and GET/POST /items over an in-memory store, plus request validation. Distinct from the webhook verification sample. Portfolio overflow sample only — not a client system.
+<!-- Built on CromServices/crom-ts-api-starter at b2cd23a (package.json "starter.config"). Shared files come from the starter; do not edit them here first. -->
 
-## Purpose
+## What it is
 
-- Clear, testable CRUD-style endpoint pattern
-- Illustrates Crom Services capability for API overflow and small builds
-- In-memory store only; nothing sensitive in the repo
+A public sample of how Crom Services approaches small TypeScript REST API work. It is a portfolio sample, not a client system, and it holds nothing sensitive.
 
-## Stack
+- `GET /health` returns `{"status":"ok"}`.
+- `GET /items` lists items; `POST /items` validates `{"name": "..."}` (1-80 characters after trim) and returns `201` with the new item, or `400 {"error": ...}`.
+- `GET /items/:id` and `DELETE /items/:id` read and remove one item (`404` when missing).
+- `GET /` serves a minimal HTML page.
+- Storage sits behind the `Store<Item>` interface (`src/store/store.ts`); this sample uses the in-memory implementation (`src/store/memory.ts`).
 
-- TypeScript and Node.js 18+
-- Express
-- In-memory ItemStore with create/list
-- Tests via node:test (tsx loader)
+| Path | Purpose |
+|---|---|
+| `src/app.ts` | `createApp()`: routes and middleware |
+| `src/server.ts` | Listen entry (`PORT`, `HOST`) |
+| `src/routes/items.ts` | `/items` routes and `validateCreateItem` |
+| `src/lib/validate.ts` | Validation helper and `validateBody()` middleware |
+| `src/store/` | `Store<T>` interface + `InMemoryStore<T>` |
+| `test/` | `node:test` suites (validation, store, HTTP) |
 
-## Layout
+## What it proves
 
-- src/store.ts — in-memory items and validation
-- src/app.ts — Express app with /health and /items
-- src/server.ts — listen entrypoint
-- test/items.test.ts — validation and HTTP checks
+- A clear, testable CRUD-style endpoint pattern: input is validated before it reaches storage, and bad input gets a plain `400`.
+- Storage can be swapped (for example, to a database adapter) without touching the routes, because routes only see `Store<Item>`.
+- The same toolchain as every Crom Services TypeScript API: strict TypeScript, `node:test`, a multi-stage `Dockerfile` and `fly.toml`.
 
-## How to run
+## Live link
 
-Install dependencies with the package manager, then execute the test script.
-Optional: start the local server with the start script (PORT defaults to 3000).
+Not hosted. Run it locally with the three commands below.
 
-## Capability
+## Run in 3 commands
 
-- Code and PR review packs
-- Small builds and patches as PRs
-- API and webhook work
+Needs Node 20 or newer.
 
-Crom Services · Perth WA · Remote across Australia
-Trading as Crom Services
+```bash
+npm install
+npm test
+npm run dev        # http://localhost:3000/health
+```
 
-Site: https://cromservices.github.io/job-page-sample/packs/
-Contact: cromservices@gmail.com
+`npm run build` compiles to `dist/`, and `npm start` runs the compiled server. Copy `.env.example` to `.env` to change `PORT` or `HOST`.
 
-## License
+## Reuse for a new job
 
-MIT — see LICENSE.
+Start from the template, not from this sample:
+
+1. **Use this template** on [CromServices/crom-ts-api-starter](https://github.com/CromServices/crom-ts-api-starter) to create the project repo.
+2. **Set the name** in `package.json` (`name` and the `starter.config` block), and set `starter.config.ref` to the starter commit you started from.
+3. **Set the app name** in `fly.toml` (replace `crom-CHANGE-ME`).
+4. **Build the API**: shape the `items` route into the job's resources, and add a `Store<T>` adapter if it needs a database.
+5. **Deploy**: `fly apps create <app-name>` once, then `fly deploy`, and put the URL under **Live link**.
+
+## Footer
+
+<!-- CROM THEME SLOT: replace with crom-shared README.template.md footer when live -->
+Built by [Crom Services, Australia](https://cromservices.com.au)
+
+MIT licence, see [LICENSE](LICENSE).
