@@ -10,7 +10,7 @@
       "description": "Small TypeScript REST API: /health and /items with request validation over a swappable Store<Item>.",
       "liveUrl": "",
       "source": "CromServices/crom-ts-api-starter",
-      "ref": "b2cd23a"
+      "ref": "c50f431"
     }
   },
   "scripts": {

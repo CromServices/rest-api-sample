@@ -35,16 +35,19 @@ describe("HTTP", () => {
     assert.deepEqual(await res.json(), { status: "ok" });
   });
 
-  it("GET / serves minimal HTML with the theme slot link and escaped config", async () => {
+  it("GET / serves HTML on the pinned crom-shared theme with escaped config and the Crom footer", async () => {
     const res = await fetch(`${baseUrl}/`);
     assert.equal(res.status, 200);
     assert.match(res.headers.get("content-type") ?? "", /text\/html/);
     const html = await res.text();
-    assert.match(html, /<h1>test-app<\/h1>/);
+    assert.match(html, /<h1 class="crom-h1">test-app<\/h1>/);
     assert.match(html, /&lt;b&gt;desc&lt;\/b&gt;/);
-    assert.match(html, /href="https:\/\/cromservices\.github\.io\/crom-shared\/theme\.css"/);
+    assert.match(html, /href="https:\/\/cdn\.jsdelivr\.net\/gh\/CromServices\/crom-shared@v1\.0\.0\/theme\.css"/);
     assert.equal((html.match(/rel="stylesheet"/g) ?? []).length, 1);
     assert.doesNotMatch(html, /<style/);
+    assert.doesNotMatch(html, /CROM THEME SLOT/);
+    assert.match(html, /<footer class="crom-footer">/);
+    assert.match(html, /<a href="https:\/\/cromservices\.com\.au"[^>]*aria-label="Built by Crom Services"/);
   });
 
   it("POST /items validates (400) and creates (201)", async () => {
