@@ -1,7 +1,7 @@
 {
   "name": "crom-rest-api-sample",
   "version": "2.0.0",
-  "description": "Crom Services public sample: small TypeScript REST API with validation and a swappable store",
+  "description": "Items REST API for a fictional business (not a paid engagement): small TypeScript REST API with validation and a swappable store",
   "private": true,
   "type": "module",
   "starter": {
