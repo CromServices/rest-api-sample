@@ -1,6 +1,6 @@
 import type { Entity, Store } from "./store.ts";
 
-/** In-memory Store<T>. Data is lost on restart: fine for demos and tests. */
+/** In-memory Store<T>. Data is lost on restart: fine for local runs and tests. */
 export class InMemoryStore<T extends Entity> implements Store<T> {
   private rows = new Map<string, T>();
   private seq = 0;
